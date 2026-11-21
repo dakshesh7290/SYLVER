@@ -1,6 +1,0 @@
-const CACHE='sylver-v1-3';
-const SHELL=['./','index.html','sylver-intro.html','config.js','manifest.webmanifest','favicon.ico','apple-touch-icon.png','assets/sylver-wordmark.svg','icons/favicon-32.png','icons/favicon-48.png','icons/apple-touch-icon-152.png','icons/apple-touch-icon-167.png','icons/apple-touch-icon-180.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'];
-const FONT_HOSTS=['fonts.googleapis.com','fonts.gstatic.com'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)));self.skipWaiting()});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))));self.clients.claim()});
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(url.origin!==location.origin&&!FONT_HOSTS.includes(url.host))return;event.respondWith(caches.match(req).then(cached=>{const fresh=fetch(req).then(response=>{if(response&&(response.ok||response.type==='opaque')){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(req,copy))}return response}).catch(()=>cached||caches.match('index.html'));return cached||fresh}))});
